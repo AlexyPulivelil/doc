@@ -38,7 +38,7 @@ jobs:
 
       # 5) Run pytest as "basic tests"
       - name: Run tests
-        run: pytest -q
+        run: PYTHONPATH=. pytest -q
 
       # 6) Log in to Docker Hub
       - name: Log in to Docker Hub
