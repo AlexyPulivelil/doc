@@ -9,7 +9,6 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
   }
 }
 
-# Execution role – pull image, send logs
 resource "aws_iam_role" "ecs_task_execution_role" {
   name               = "doc-api-ecs-execution-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
@@ -20,7 +19,11 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# Task role – read from SSM Parameter Store
+resource "aws_iam_role_policy_attachment" "ecs_execution_ssm_read" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+}
+
 resource "aws_iam_role" "ecs_task_role" {
   name               = "doc-api-ecs-task-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
