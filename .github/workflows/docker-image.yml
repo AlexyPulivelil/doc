@@ -60,3 +60,18 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/doc-api:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/doc-api:${{ github.sha }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # 5) Deploy: force ECS to pull new image
+      - name: Force new ECS deployment
+        run: |
+          aws ecs update-service \
+            --cluster doc-api-cluster \
+            --service doc-api-service \
+            --force-new-deployment
